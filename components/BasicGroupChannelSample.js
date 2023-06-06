@@ -312,6 +312,7 @@ const BasicGroupChannelSample = (props) => {
                 onUserNameInputChange={onUserNameInputChange}
             />
             <ChannelList
+                state={state}
                 channels={state.channels}
                 handleJoinChannel={handleJoinChannel}
                 handleCreateChannel={handleLoadMemberSelectionList}
@@ -354,6 +355,7 @@ const BasicGroupChannelSample = (props) => {
 
 // Chat UI Components
 const ChannelList = ({
+    state,
     channels,
     handleJoinChannel,
     handleDeleteChannel,
@@ -363,6 +365,7 @@ const ChannelList = ({
         <div className='channel-list'>
             <div className="channel-type">
                 <h1>Group Channels</h1>
+                <h3>user :- {state.userNameInputValue}</h3>
                 <button className="channel-create-button" onClick={() => handleLoadMemberSelectionList()}>Create Channel</button>
             </div>
             {channels.map(channel => {
@@ -523,13 +526,17 @@ const MembersSelect = ({
     if (applicationUsers.length > 0) {
         return <div className="overlay">
             <div className="overlay-content">
-                <button onClick={() => {
-                    if (currentlyJoinedChannel) {
-                        handleUpdateChannelMembersList();
-                    } else {
-                        handleCreateChannel();
-                    }
-                }}>{currentlyJoinedChannel ? 'Submit' : 'Create'}</button>
+                <button
+                    onClick={() => {
+                        if (currentlyJoinedChannel) {
+                            handleUpdateChannelMembersList();
+                        } else {
+                            handleCreateChannel();
+                        }
+                    }}
+                >
+                    {currentlyJoinedChannel ? 'Submit' : 'Create'}
+                </button>
                 {applicationUsers.map((user) => {
                     const userSelected = groupChannelMembers.some((member) => member === user.userId);
                     return <div
@@ -619,13 +626,19 @@ const inviteUsersToChannel = async (channel, userIds) => {
     await channel.inviteWithUserIds(userIds);
 }
 
+// createChannel creates the channel and by default it names the channel as testChannel
 const createChannel = async (channelName, userIdsToInvite) => {
+    console.log("user ids of users =>", userIdsToInvite)
     try {
-        const groupChannelParams = {};
-        groupChannelParams.invitedUserIds = userIdsToInvite;
-        groupChannelParams.name = channelName;
-        groupChannelParams.operatorUserIds = userIdsToInvite;
-        const groupChannel = await sb.groupChannel.createChannel(groupChannelParams);
+        const groupChannel = await sb.groupChannel.createChannel({
+            invitedUserIds: userIdsToInvite,
+            name: channelName,
+            operatorUserIds: userIdsToInvite,
+            //collab for two people only
+            isDistinct: true,
+            customType: 'DM'
+        });
+        console.log('response after creating channel =>', groupChannel)
         return [groupChannel, null];
     } catch (error) {
         return [null, error];
