@@ -353,7 +353,7 @@ const BasicGroupChannelSample = (props) => {
     );
 };
 
-// Chat UI Components
+// Channels are displayed here
 const ChannelList = ({
     state,
     channels,
@@ -361,6 +361,7 @@ const ChannelList = ({
     handleDeleteChannel,
     handleLoadMemberSelectionList
 }) => {
+
     return (
         <div className='channel-list'>
             <div className="channel-type">
@@ -429,8 +430,9 @@ const MembersList = ({ channel, handleMemberInvite }) => {
         return null;
     }
 }
-
+//Messages are displayed here
 const MessagesList = ({ messages, handleDeleteMessage, updateMessage }) => {
+    console.log(messages)
     return <div className="message-list">
         {messages.map(message => {
             if (!message.sender) return null;
