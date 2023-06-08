@@ -372,6 +372,7 @@ const ChannelList = ({
             {channels.map(channel => {
                 return (
                     <div key={channel.url} className="channel-list-item" >
+                        {console.log(channel)}
                         <div
                             className="channel-list-item-name"
                             onClick={() => { handleJoinChannel(channel.url) }}>
